@@ -1,6 +1,4 @@
-# == Class: nodejs
-#
-# Full description of class nodejs here.
+# = Class: nodejs::npm
 #
 # === Parameters
 #
@@ -23,7 +21,6 @@
 #
 # === Examples
 #
-# include nodejs
 #
 # === Authors
 #
@@ -33,30 +30,29 @@
 #
 # Copyright 2016 Matthew Hansen
 #
-class nodejs () {
+define nodejs::npm ($project = $title) {
 
-  # install nodejs package
-  package { 'nodejs':
-    require => Exec['apt-update'],
-    ensure  => installed,
+
+  # install less - Compiled CSS
+  # https://www.npmjs.com/package/less
+  exec { 'install_less':
+    command => 'npm install -g less',
+    creates => '/usr/local/lib/node_modules/less',
+    require => Package['npm']
   }
 
-  # install npm package
-  package { 'npm':
-    require => Package['nodejs'],
-    ensure  => installed,
+  # install uglifyjs - JavaScript parser, mangler/compressor and beautifier toolkit
+  # https://www.npmjs.com/package/uglify-js
+  exec { 'install_uglifyjs':
+    command => 'npm install -g uglifyjs',
+    creates => '/usr/local/lib/node_modules/uglifyjs/',
+    require => Package['npm']
   }
 
-
-  # Use update-alternatives to ensure the node executable is available
-  # http://stackoverflow.com/a/24592328
-  # sudo update-alternatives --install /usr/bin/node nodejs /usr/bin/nodejs 100
-  exec { 'update_alternatives_nodejs':
-    path     => '/bin:/usr/bin',
-    command  => 'update-alternatives --install /usr/bin/node nodejs /usr/bin/nodejs 100',
-    require => Package['nodejs']
+  # install gulp - Streaming build system
+  # https://www.npmjs.com/package/gulp
+  exec { 'install_gulp':
+    command => 'npm install -g gulp',
+    require => Package['npm']
   }
-
-  nodejs::npm{ 'nodejs_npm': }
-
 }
